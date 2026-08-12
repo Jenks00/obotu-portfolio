@@ -1,17 +1,17 @@
 :root{
-    --bg: #0B0C0D;
-    --bg-raised: #1A1B21;
-    --bg-raised-2: #212229;
-    --text: #F5F7F0;
-    --text-soft: #A9AC9E;
-    --muted: #6E7267;
-    --accent: #AFACFF;
-    --accent-ink: #0B0C0D;
-    --accent-2: #6D66FF;
-    --line: rgba(245,247,240,0.13);
-    --line-strong: rgba(245,247,240,0.22);
-    --focus: #AFACFF;
-    --shadow: rgba(0,0,0,0.55);
+    --bg: #FBF3E4;
+    --bg-raised: #F3E4C8;
+    --bg-raised-2: #ECD9B8;
+    --text: #3B2412;
+    --text-soft: #6B4A2E;
+    --muted: #8C6A48;
+    --accent: #92400E;
+    --accent-ink: #FDF6E9;
+    --accent-2: #B45309;
+    --line: rgba(59,36,18,0.15);
+    --line-strong: rgba(59,36,18,0.28);
+    --focus: #92400E;
+    --shadow: rgba(59,36,18,0.28);
     --elevation-1: 0 1px 2px var(--shadow);
     --elevation-2: 0 10px 24px -10px var(--shadow);
     --elevation-3: 0 22px 44px -16px var(--shadow);
@@ -392,30 +392,64 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
+
+  /* 3D flip card */
   .work-card{
+    position: relative;
+    height: 420px;
+    perspective: 1600px;
+    cursor: pointer;
+    border-radius: 14px;
+  }
+  .work-card:focus-visible{
+    outline: 2px solid var(--focus);
+    outline-offset: 4px;
+    border-radius: 16px;
+  }
+  .flip-inner{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    transition: transform .7s cubic-bezier(0.4, 0.15, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  .work-card.is-flipped .flip-inner{ transform: rotateY(180deg); }
+  @media (hover: hover) and (pointer: fine){
+    .work-card:not(.is-flipped):hover .flip-inner{ transform: rotateY(180deg); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .flip-inner{ transition: none; }
+  }
+
+  .flip-face{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     border: 1px solid var(--line);
     border-radius: 14px;
-    text-decoration: none;
-    color: var(--text);
     background: var(--bg-raised);
-    display: flex; flex-direction: column;
-    cursor: pointer;
-    overflow: hidden;
     box-shadow: var(--elevation-1);
-    transform-style: preserve-3d;
-    will-change: transform;
-    transition: transform .5s cubic-bezier(0.22, 1.4, 0.36, 1), box-shadow .3s ease, border-color .3s ease;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition: border-color .3s ease, box-shadow .3s ease;
   }
-  .work-card:hover{
+  .work-card:hover .flip-face,
+  .work-card.is-flipped .flip-face{
     border-color: var(--accent);
     box-shadow: var(--elevation-4), 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
   }
+  .flip-back{ transform: rotateY(180deg); }
+
   .work-thumb{
     aspect-ratio: 16 / 10;
     overflow: hidden;
     background: var(--bg-raised-2);
     border-bottom: 1px solid var(--line);
     position: relative;
+    flex: 0 0 auto;
   }
   .work-thumb img{
     width: 100%; height: 100%;
@@ -425,8 +459,21 @@
   }
   .work-thumb.placeholder{ display: flex; align-items: center; justify-content: center; }
   .work-thumb.placeholder svg{ width: 60%; height: 60%; opacity: 0.55; }
-  .work-body{ padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-  .work-body h3{ font-size: 1.08rem; font-weight: 800; }
+
+  .flip-front-body{ padding: 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+  .flip-front-body h3{ font-size: 1.08rem; font-weight: 800; }
+  .flip-hint{
+    margin-top: auto;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 0.68rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .flip-hint svg{ width: 12px; height: 12px; transition: transform .3s ease; }
+  .work-card:hover .flip-hint svg{ transform: rotate(180deg); }
+
+  .work-body{ padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; overflow-y: auto; }
+  .work-body h3{ font-size: 1.05rem; font-weight: 800; }
   .work-body p{ margin: 0; font-size: 0.88rem; color: var(--text-soft); flex: 1; }
   .work-meta{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
   .work-foot{
@@ -436,6 +483,8 @@
   }
   .work-foot .lock{ display: inline-flex; align-items: center; gap: 6px; }
   .work-foot .arrow{ color: var(--accent); }
+  .work-foot a{ color: var(--accent); text-decoration: none; }
+  .work-foot a:hover{ text-decoration: underline; }
 
   /* ---------- Expertise grid (skills) ---------- */
   .expertise-grid{
@@ -523,6 +572,7 @@
   @media (max-width: 900px){
     .work-grid{ grid-template-columns: 1fr; }
     .focus-grid{ grid-template-columns: 1fr; }
+    .work-card{ height: 400px; }
   }
   @media (max-width: 760px){
     .exhibit{ grid-template-columns: 1fr; }

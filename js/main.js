@@ -56,6 +56,32 @@
   document.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // 3D flip cards (Work grid)
+  var flipCards = document.querySelectorAll('.work-card');
+  flipCards.forEach(function(card){
+    var title = card.querySelector('h3');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-pressed', 'false');
+    if(title){ card.setAttribute('aria-label', title.textContent + ', flip for details'); }
+
+    function toggle(){
+      var flipped = card.classList.toggle('is-flipped');
+      card.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+    }
+    card.addEventListener('click', function(e){
+      if(e.target.closest('a')) return;
+      toggle();
+    });
+    card.addEventListener('keydown', function(e){
+      if(e.target !== card) return;
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        toggle();
+      }
+    });
+  });
+
   // Hero: 3D point-cloud (hand-rolled WebGL, no libraries) with 2D canvas fallback
   var canvas = document.getElementById('hero-canvas');
   var hero = document.querySelector('.hero');
@@ -67,7 +93,7 @@
     return [parseInt(m[1],16)/255, parseInt(m[2],16)/255, parseInt(m[3],16)/255];
   }
   function accentRGB(){ return hexToRgb01(getComputedStyle(document.documentElement).getPropertyValue('--accent')); }
-  function lineRGB(){ return hexToRgb01('#4A4C58'); }
+  function lineRGB(){ return hexToRgb01('#8C6A48'); }
 
   var gl = null;
   try{ gl = canvas.getContext('webgl', { antialias: true, alpha: true }) || canvas.getContext('experimental-webgl'); }catch(e){ gl = null; }
